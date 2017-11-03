@@ -40,17 +40,16 @@ class InceptionV4(chainer.ChainList):
         return loss
 
 
-class ConvAct(L.Convolution2D):
+class ConvAct(chainer.link.Chain):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.bn = L.BatchNormalization(self.out_channels)
+        oc = kwargs['out_channels'] if 'out_channels' in kwargs else args[1]
+        super().__init__(
+            conv=L.Convolution2D(*args, **kwargs),
+            bn=L.BatchNormalization(oc)
+        )
 
     def __call__(self, x):
-        return F.relu(self.bn(super().__call__(x)))
-
-    def to_gpu(self, *args, **kwargs):
-        super().to_gpu(*args, **kwargs)
-        self.bn.to_gpu(*args, **kwargs)
+        return F.relu(self.bn(self.conv(x)))
 
 
 class Stem(chainer.link.Chain):
