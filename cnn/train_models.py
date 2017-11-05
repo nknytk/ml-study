@@ -13,6 +13,7 @@ from resnet import ResNet50
 from inception_v4 import InceptionV4
 from inception_resnet_v2 import InceptionResNetV2
 from fc100 import FaceClassifier100x100V, FaceClassifier100x100V2
+from squeezenet import SqueezeNet
 
 N_EPOCHS = 100
 BATCH_SIZE = 10
@@ -31,8 +32,10 @@ def main():
     #model = FaceClassifier100x100V(n_classes=17)
     #model = VGGNetBN(17)
     #model = VGGNetBN(17, 16)
-    model = GoogLeNetBN()
+    #model = GoogLeNetBN()
     #model = ResNet50()
+    #model = SqueezeNet(17)
+    model = SqueezeNet(17, 8)
     optimizer = Adam()
     optimizer.setup(model)
 

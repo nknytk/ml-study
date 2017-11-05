@@ -38,10 +38,9 @@ batch normalizationを行う位置を論文から正確に理解できず、想�
 
 層を浅くする時はscalingの値を1に近づけるよう調整したほうが良さそうな気がする
 
-### report.md
+### [report.md](cnn/report.md)
 
 上記CNNの性能検証レポート
-
 
 ## License
 
