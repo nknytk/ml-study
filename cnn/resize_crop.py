@@ -3,8 +3,8 @@
 import os
 from PIL import Image
 
-#OUT_SIZE = 299
-OUT_SIZE = 224
+OUT_SIZE = 299
+#OUT_SIZE = 224
 #OUT_SIZE = 100
 
 
@@ -20,7 +20,7 @@ def main():
             padding = int((h - w) / 2)
             img = img.crop((0, padding, w, w + padding))
         # リサイズして保存
-        img.thumbnail((OUT_SIZE, OUT_SIZE))
+        img.thumbnail((OUT_SIZE, OUT_SIZE), Image.LANCZOS)
         img.save('dataset{}/'.format(OUT_SIZE) + f)
 
 
