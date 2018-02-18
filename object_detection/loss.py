@@ -7,18 +7,29 @@ import numpy
 
 class LossCalculator:
     def __init__(self, n_classes, weight_noobj=0.2, weight_pos=1):
-        self.class_weight = numpy.ones(n_classes + 1, dtype=numpy.float32)
+        self.xp = numpy
+        self.class_weight = self.xp.ones(n_classes + 1, dtype=self.xp.float32)
         self.class_weight[0] = weight_noobj
         self.weight_pos = weight_pos
         self.n_classes = n_classes
 
+    def to_gpu(self):
+        import cupy
+        self.xp = cupy
+        self.class_weight_cpu = self.class_weight
+        self.class_weight = chainer.cuda.to_gpu(self.class_weight_cpu)
+
+    def to_cpu(self):
+        self.xp = numpy
+        self.class_weight = self.class_weight_cpu
+
     def loss(self, pred, actual):
         batch_size, n_boxes, _ = actual.shape
-        id_array = numpy.array(actual[:,:,4], dtype=numpy.int32).reshape(batch_size * n_boxes)
+        id_array = self.xp.array(actual[:,:,4], dtype=self.xp.int32).reshape(batch_size * n_boxes)
         cl_pred = pred[:,:,4:].reshape((batch_size * n_boxes, self.n_classes + 1))
         cl_loss = F.softmax_cross_entropy(cl_pred, id_array, class_weight=self.class_weight)
 
-        obj_idx = numpy.where(actual[:,:,4] > 0)
+        obj_idx = self.xp.where(actual[:,:,4] > 0)
 
         if obj_idx[0].size > 0:
             pred_boxes = pred[obj_idx][:,:4]

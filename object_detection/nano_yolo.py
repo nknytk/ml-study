@@ -37,6 +37,7 @@ class NanoYOLO(chainer.Chain):
             fc=L.Linear(n_base_units * 8, n_boxes * (5 + n_classes))
         )
         self.feature_dim = n_base_units * 8
+        #self.loss_calc = LossCalculator(n_classes, weight_pos=10)
         self.loss_calc = LossCalculator(n_classes)
         self.n_classes = n_classes
         self.n_boxes = n_boxes
@@ -51,7 +52,7 @@ class NanoYOLO(chainer.Chain):
         h = self.reduct(x)
         h = self.fc(h)
 
-        batch_size = x.data.shape[0]
+        batch_size = int(h.size / (self.n_boxes * (5 + self.n_classes)))
         r = F.reshape(h, (batch_size, self.n_boxes, 5 + self.n_classes))
         return r
 
@@ -80,6 +81,14 @@ class NanoYOLO(chainer.Chain):
 
         return h
 
+    def to_gpu(self, *args, **kwargs):
+        self.loss_calc.to_gpu()
+        return super().to_gpu(*args, **kwargs)
+
+    def to_cpu(self, *args, **kwargs):
+        self.loss_calc.to_cpu()
+        return super().to_gpu(*args, **kwargs)
+
 
 class MicroYOLO(chainer.Chain):
     def __init__(self, n_classes, n_base_units=16, n_boxes=5):
@@ -104,6 +113,7 @@ class MicroYOLO(chainer.Chain):
             fc=L.Linear(n_base_units * 18, n_boxes * (5 + n_classes))
         )
         self.feature_dim = n_base_units * 8
+        #self.loss_calc = LossCalculator(n_classes, weight_pos=10)
         self.loss_calc = LossCalculator(n_classes)
         self.n_classes = n_classes
         self.n_boxes = n_boxes
@@ -118,7 +128,7 @@ class MicroYOLO(chainer.Chain):
         h = self.reduct(x)
         h = self.fc(h)
 
-        batch_size = x.data.shape[0]
+        batch_size = int(h.size / (self.n_boxes * (5 + self.n_classes)))
         r = F.reshape(h, (batch_size, self.n_boxes, 5 + self.n_classes))
         return r
 
@@ -144,3 +154,11 @@ class MicroYOLO(chainer.Chain):
         h = F.average_pooling_2d(h, 9, stride=1)
 
         return h
+
+    def to_gpu(self, *args, **kwargs):
+        self.loss_calc.to_gpu()
+        return super().to_gpu(*args, **kwargs)
+
+    def to_cpu(self, *args, **kwargs):
+        self.loss_calc.to_cpu()
+        return super().to_gpu(*args, **kwargs)
