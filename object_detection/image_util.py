@@ -26,7 +26,7 @@ def image_to_yolodata(img_path, target_size, n_classes, boxes, n_boxes=5, augmen
             t_img, t_boxes = orig_img, boxes
         else:
             t_img, t_boxes = horizontal_flip(orig_img, boxes)
-        max_noise = min(w, h) * 0.1
+        max_noise = min(w, h) * 0.2
         w_noise = int(max_noise * (random() - 1))
         h_noise = int(max_noise * (random() - 1))
 
@@ -77,7 +77,7 @@ def crop_resize(img, boxes, size, w_noise=0, h_noise=0):
             h_max = h
         else:
             h_min = 0
-            h_max = h - h_noise
+            h_max = h + h_noise
         crop_size = h_max - h_min
 
         w_offset = int((w - h) / 2)
@@ -90,7 +90,7 @@ def crop_resize(img, boxes, size, w_noise=0, h_noise=0):
             w_max = w
         else:
             w_min = 0
-            w_max = w - w_noise
+            w_max = w + w_noise
         crop_size = w_max - w_min
 
         h_offset = int((h - w) / 2)
@@ -103,7 +103,7 @@ def crop_resize(img, boxes, size, w_noise=0, h_noise=0):
             w_max = w
         else:
             w_min = 0
-            w_max = w - w_noise
+            w_max = w + w_noise
         crop_size = w_max - w_min
 
         h_min, h_max = choice([(0, crop_size), (h - crop_size, h)])
