@@ -30,9 +30,9 @@ def image_to_yolodata(img_path, target_size, n_classes, boxes, n_boxes=5, augmen
         w_noise = int(max_noise * (random() - 1))
         h_noise = int(max_noise * (random() - 1))
 
-        t_img, t_boxes = crop_resize(t_img, t_boxes, target_size, w_noise, h_noise)
+        t_img, t_boxes = resize(t_img, t_boxes, target_size, w_noise, h_noise)
     else:
-        t_img, t_boxes = crop_resize(orig_img, boxes, target_size)
+        t_img, t_boxes = resize(orig_img, boxes, target_size)
 
     np_img = numpy.asarray(t_img.convert('RGB'), dtype=numpy.float32).transpose(2, 0, 1)
 
@@ -61,6 +61,31 @@ def horizontal_flip(img, boxes):
         flipped_xmax = X - xmin
         flipped_boxes.append((flipped_xmin, ymin, flipped_xmax, ymax, cls_id))
     return flipped_img, flipped_boxes
+
+
+def resize(img, boxes, size, w_noise=0, h_noise=0):
+    w, h = img.size
+    w2 = w - abs(w_noise)
+    h2 = h - abs(h_noise)
+    w_ratio = size / w2
+    h_ratio = size / h2
+
+    xmin = max(0, w_noise)
+    ymin = max(0, h_noise)
+    xmax = min(w, w + w_noise)
+    ymax = min(h, h + w_noise)
+
+    cropped_img = img.crop((xmin, ymin, xmax, ymax)).reshape((size, size), Image.LANCZOS)
+    offset_boxes = []
+    for box in boxes:
+        bxmin = max(0, (box[0] - xmin) * w_ratio)
+        bymin = max(0, (box[1] - ymin) * h_ratio)
+        bxmax = min(size, (box[2] - xmin) * w_ratio)
+        bymax = min(size, (box[3] - ymin) * h_ratio)
+        if bxmin < size and bymin < size and bxmax > 0 and bymax > 0:
+            offset_boxes.append((bxmin, bymin, bxmax, bymax, box[4]))
+
+    return cropped_img, offset_boxes
 
 
 def crop_resize(img, boxes, size, w_noise=0, h_noise=0):
