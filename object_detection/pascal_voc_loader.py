@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import random
 import os
 import re
 import sys
@@ -48,40 +49,33 @@ def load_pascal_voc_dataset(root_dir):
 
     train_x, train_y, val_x, val_y = [], [], [], []
     with open(os.path.join(root_dir, 'VOC2007/ImageSets/Main/person_trainval.txt')) as fp:
-        l = 0
         for line in fp:
             image_id, is_obj = re.sub('\s+', ' ', line.strip()).split(' ')
-            if is_obj != '1':
-                if l >= 200:
-                    continue
-                else:
-                    l += 1
-            train_x.append(os.path.join(image_2007_dir, image_id + '.jpg'))
             obj_pos = object_positions(os.path.join(annotation_2007_dir, image_id + '.xml'))
+            if not obj_pos:
+                if random.random() > 0.02:
+                    continue
+            train_x.append(os.path.join(image_2007_dir, image_id + '.jpg'))
             train_y.append(obj_pos)
     with open(os.path.join(root_dir, 'VOC2012/ImageSets/Main/person_train.txt')) as fp:
         l = 0
         for line in fp:
             image_id, is_obj = re.sub('\s+', ' ', line.strip()).split(' ')
-            if is_obj != '1':
-                if l >= 200:
-                    continue
-                else:
-                    l += 1
-            train_x.append(os.path.join(image_2012_dir, image_id + '.jpg'))
             obj_pos = object_positions(os.path.join(annotation_2012_dir, image_id + '.xml'))
+            if not obj_pos:
+                if random.random() > 0.02:
+                    continue
+            train_x.append(os.path.join(image_2012_dir, image_id + '.jpg'))
             train_y.append(obj_pos)
     with open(os.path.join(root_dir, 'VOC2012/ImageSets/Main/person_val.txt')) as fp:
         l = 0
         for line in fp:
             image_id, is_obj = re.sub('\s+', ' ', line.strip()).split(' ')
-            if is_obj != '1':
-                if l >= 200:
-                    continue
-                else:
-                    l += 1
-            val_x.append(os.path.join(image_2012_dir, image_id + '.jpg'))
             obj_pos = object_positions(os.path.join(annotation_2012_dir, image_id + '.xml'))
+            if not obj_pos:
+                if random.random() > 0.02:
+                    continue
+            val_x.append(os.path.join(image_2012_dir, image_id + '.jpg'))
             val_y.append(obj_pos)
 
     return train_x, train_y, val_x, val_y
@@ -89,4 +83,4 @@ def load_pascal_voc_dataset(root_dir):
 
 if __name__ == '__main__':
     res = load_pascal_voc_dataset(sys.argv[1])
-    print(len(res[1]), sum([len(l) for l in res[1] if l]))
+    print(len(res[1]), len([l for l in res[1] if l]), sum([len(l) for l in res[1] if l]))
