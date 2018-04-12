@@ -1,7 +1,9 @@
 機械学習の勉強に使ったコードを置くリポジトリ。  
 主にPython3で実装される。
 
-### cnn
+### 画像分類
+
+`image_classification/`下のコード
 
 #### inception_v4.py
 
@@ -38,7 +40,7 @@ batch normalizationを行う位置を論文から正確に理解できず、想�
 
 層を浅くする時はscalingの値を1に近づけるよう調整したほうが良さそうな気がする
 
-### [report.md](cnn/report.md)
+### [report.md](image-classification/report.md)
 
 上記CNNの性能検証レポート
 
