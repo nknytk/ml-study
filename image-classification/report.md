@@ -42,10 +42,9 @@
 | ---- | ---- |
 | 精度 | 評価データに対する正解率の最高値(%) |
 | 学習時間 | GPUを使用し、`batchsize=10` で200epochの学習と評価を行うのにかかった時間(s) |
-| CPU推論時間 | 環境変数`OMP_NUM_THREADS=1`を設定し、CPUを1Coreのみ使用して1枚ずつ推論を行うのにかかった時間の平均(image/ms) |
-| GPUバッチ推論時間 | GPUを使用し、batchsize=30で推論を行った際の画像1枚あたりの所要時間(image/ms) |
-| 推論時間@RPi | Raspberry Pi 3 Model Bで、環境変数`OMP_NUM_THREADS=1`を設定し、  
-CPUを1Coreのみ使用して1枚ずつ推論を行うのにかかった時間の平均(image/ms) |
+| CPU推論時間 | 環境変数`OMP_NUM_THREADS=1`を設定し、CPUを1Coreのみ使用して1枚ずつ推論を行うのにかかった時間の平均(ms/枚) |
+| GPUバッチ推論時間 | GPUを使用し、batchsize=30で推論を行った際の画像1枚あたりの所要時間(ms/枚) |
+| 推論時間@RPi | Raspberry Pi 3 Model Bで、環境変数`OMP_NUM_THREADS=1`を設定し、CPUを1Coreのみ使用して1枚ずつ推論を行うのにかかった時間の平均(image/ms) |
 | モデルサイズ | 学習済モデルをserializeして保存した時のnpzファイルサイズ(MB) |
 
 ### モデル
