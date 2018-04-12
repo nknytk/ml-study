@@ -75,20 +75,27 @@ class ImageWidget(QtWidgets.QWidget):
 
     def capture(self):
         while self.stop_q.empty():
-            if self.in_q.qsize() >= self.n_procs:
-                sleep(0.01)
-                continue
             _, img = self.camera.read()
-            self.in_q.put(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+            if self.in_q.qsize() > 1:
+                continue
+            self.in_q.put((time(), cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
         self.camera.release()
 
     def draw(self):
         cnt = 0
         t = time()
+        frame_buffer = []
         while self.stop_q.empty():
             try:
-                img2draw = self.out_q.get(block=True, timeout=3)
+                res = self.out_q.get(block=True, timeout=3)
+                frame_buffer.append(res)
+                if len(frame_buffer) < self.n_procs:
+                    continue
+
+                frame_buffer.sort(key=lambda x: x[0], reverse=True)
+                timestamp, img2draw = frame_buffer.pop()
                 self.set_image(cv2.cvtColor(img2draw, cv2.COLOR_RGB2BGRA))
+
                 cnt += 1
                 if cnt % 30 == 0:
                     n = time()
@@ -114,9 +121,9 @@ class ImageWidget(QtWidgets.QWidget):
 def detect_face(controller):
     while controller.stop_q.empty():
         try:
-            image = controller.in_q.get(block=True, timeout=3)
+            timestamp, image = controller.in_q.get(block=True, timeout=3)
         except:
-            sleep(0.01)
+            sleep(0.001)
             continue
 
         resized_image = cv2.resize(image, (detector.img_size, detector.img_size))
@@ -141,7 +148,7 @@ def detect_face(controller):
 
             cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (255, 0, 0), thickness=2)
 
-        controller.out_q.put(image)
+        controller.out_q.put((timestamp, image))
 
 
 if __name__ == '__main__':
