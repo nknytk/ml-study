@@ -1,11 +1,11 @@
 機械学習の勉強に使ったコードを置くリポジトリ。  
 主にPython3で実装される。
 
-### 画像分類
+## 画像分類
 
 `image_classification/`下のコード
 
-#### inception_v4.py
+### inception_v4.py
 
 [Inception-v4, Inception-ResNet and the Impact of Residual Connections on Learning (arXiv:1602.07261)](https://arxiv.org/abs/1602.07261)で提案されたInception-v4のchainer実装。`InceptionV4`クラスを使用する。
 
@@ -20,7 +20,7 @@
 | cblocks | 論文Figure 9の`Inception-C`の繰り返し数 | 3 |
 | dropout | 全結合層手前で行うdropoutの割合。keep=1-dropout | 0.2 |
 
-#### inception_resnet_v2.py
+### inception_resnet_v2.py
 
 [(arXiv:1602.07261)](https://arxiv.org/abs/1602.07261)で提案されたInception-ResNet-v2のchainer実装。`InceptionResNetV2`を使用する。 
 batch normalizationを行う位置を論文から正確に理解できず、想像で実装した部分がある。また、Inception-ResNet-v2で使用されたReduction-Bの構造について論文に明記されていないが、channel数からInception-ResNet-v1("wider"ではない方)と同じであると推察して実装した。  
@@ -43,6 +43,13 @@ batch normalizationを行う位置を論文から正確に理解できず、想�
 ### [report.md](image-classification/report.md)
 
 上記CNNの性能検証レポート
+
+## オブジェクト検出
+
+`object_detection/` 以下のコード。YOLOを参考に、CNNのネットワークを差し替えて高速化を目指している。
+
+現時点で成功しているのは、CNN部をMobileNetのフィルタ削減版に置き換え、顔の検知を行うモデルのみ。  
+Raspberry Pi 3 Model B + USB Webカメラ の環境で、6.5FPSで顔の検出を行える。詳しくは[こちら](object_detection/face_detection.md)を参照。
 
 ## License
 
