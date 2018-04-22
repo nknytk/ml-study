@@ -64,7 +64,7 @@ class YoloDataset(DatasetMixin):
 
         np_img = numpy.asarray(t_img.convert('RGB'), dtype=numpy.float32).transpose(2, 0, 1)
 
-        np_boxes = numpy.zeros((self.n_grid**2, 5 + self.n_classes), dtype=numpy.float32)
+        np_boxes = numpy.zeros((self.n_grid**2, 5), dtype=numpy.float32)
         for box in t_boxes:
             w_min, h_min, w_max, h_max, cls_id = box
             grid_idx, grid_center_x, grid_center_y, relative_w, relative_h = self.grid_retriever.grid_position(w_min, h_min, w_max, h_max)
