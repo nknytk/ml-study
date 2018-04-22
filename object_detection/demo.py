@@ -14,13 +14,15 @@ import numpy
 import cv2
 from  PyQt5 import QtCore, QtGui, QtWidgets
 
-from mobile_yolo import MobileYOLO
+from mobile_yolo import MobileYOLO, MicroYOLO
 from yolo_dataset import GridRetriever
 from pascal_voc_loader import name2id, id2name
 
 chainer.config.train = False
-detector = MobileYOLO(n_classes=2, n_base_units=3)
-chainer.serializers.load_npz('results/mobile_3/best_classification.npz', detector)
+#detector = MobileYOLO(n_classes=2, n_base_units=3)
+#chainer.serializers.load_npz('results/mobile_3/best_classification.npz', detector)
+detector = MicroYOLO(n_classes=2, n_base_units=3)
+chainer.serializers.load_npz('results/micro/micro3.npz', detector)
 grid_retriever = GridRetriever(detector.img_size, detector.img_size, detector.n_grid, detector.n_grid)
 n_procs = 3
 
