@@ -19,17 +19,19 @@ from yolo_dataset import GridRetriever
 from pascal_voc_loader import name2id, id2name
 
 chainer.config.train = False
-#detector = MobileYOLO(n_classes=2, n_base_units=3)
-#chainer.serializers.load_npz('results/mobile_3/best_classification.npz', detector)
-detector = MicroYOLO(n_classes=2, n_base_units=3)
-chainer.serializers.load_npz('results/micro/micro3.npz', detector)
+detector = MobileYOLO(n_classes=2, n_base_units=3)
+chainer.serializers.load_npz('results/mobile_3/best_classification.npz', detector)
+#detector = MicroYOLO(n_classes=2, n_base_units=3)
+#chainer.serializers.load_npz('results/micro/micro3.npz', detector)
 grid_retriever = GridRetriever(detector.img_size, detector.img_size, detector.n_grid, detector.n_grid)
-n_procs = 3
 
 
 def streaming_detection():
     app = QtWidgets.QApplication(sys.argv)
-    window = ImageWidget(n_procs)
+    # 遅延よりFPSを優先する場合、bufferに画像を貯めて処理画像が途切れないように設定
+    #window = ImageWidget(3, 1, 3)
+    # bufferを減らすと、FPSとスムーズさを犠牲に遅延を減らすことができる
+    window = ImageWidget(3, 0, 2)
     window.show()
 
     try:
@@ -39,11 +41,13 @@ def streaming_detection():
 
 
 class ImageWidget(QtWidgets.QWidget):
-    def __init__(self, n_procs=1):
+    def __init__(self, n_procs=3, input_buffer_size=2, output_buffer_size=3):
         super().__init__()
         self.image = None
         self.camera = cv2.VideoCapture(0)
         self.n_procs = n_procs
+        self.input_buffer_size = input_buffer_size
+        self.output_buffer_size = output_buffer_size
         self.in_q = Queue()
         self.out_q = Queue()
         self.stop_q = Queue()
@@ -78,7 +82,7 @@ class ImageWidget(QtWidgets.QWidget):
     def capture(self):
         while self.stop_q.empty():
             _, img = self.camera.read()
-            if self.in_q.qsize() > 1:
+            if self.in_q.qsize() > self.input_buffer_size:
                 continue
             self.in_q.put((time(), cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
         self.camera.release()
@@ -91,7 +95,7 @@ class ImageWidget(QtWidgets.QWidget):
             try:
                 res = self.out_q.get(block=True, timeout=3)
                 frame_buffer.append(res)
-                if len(frame_buffer) < self.n_procs:
+                if len(frame_buffer) < self.output_buffer_size:
                     continue
 
                 frame_buffer.sort(key=lambda x: x[0], reverse=True)
