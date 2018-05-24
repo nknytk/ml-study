@@ -16,22 +16,21 @@ from yolo_dataset import YoloDataset
 from mobile_yolo import MobileYOLO
 
 DEVICE = -1
-BATCH_SIZE = 10
-N_EPOCHS = 100
+BATCH_SIZE = 5
+N_EPOCHS = 500
 DATASET_ROOT = '../VOCdevkit'
-RESULT_DIR = 'results/mobile_8'
+RESULT_DIR = 'results/mobile_3'
 
 
 def main():
     model_class = MobileYOLO
-    #model_class = IRYOLO
     train_x, train_y, val_x, val_y = load_pascal_voc_dataset(DATASET_ROOT)
     train_dataset = YoloDataset(train_x, train_y, target_size=model_class.img_size, n_grid=model_class.n_grid, augment=True)
     test_dataset = YoloDataset(val_x, val_y, target_size=model_class.img_size, n_grid=model_class.n_grid, augment=False)
 
     class_weights = [1.0 for i in range(train_dataset.n_classes)]
     class_weights[0] = 0.1
-    model = model_class(n_classes=train_dataset.n_classes, n_base_units=8, class_weights=class_weights)
+    model = model_class(n_classes=train_dataset.n_classes, n_base_units=3, class_weights=class_weights)
     if os.path.exists(RESULT_DIR + '/model_last.npz'):
         print('continue from previous result')
         chainer.serializers.load_npz(RESULT_DIR + '/model_last.npz', model)
