@@ -48,8 +48,14 @@ batch normalizationを行う位置を論文から正確に理解できず、想�
 
 `object_detection/` 以下のコード。YOLOを参考に、CNNのネットワークを差し替えて高速化を目指している。
 
-現時点で成功しているのは、CNN部をMobileNetのフィルタ削減版に置き換え、顔の検知を行うモデルのみ。  
-Raspberry Pi 3 Model B + USB Webカメラ の環境で、6.5FPSで顔の検出を行える。詳しくは[こちら](object_detection/face_detection.md)を参照。
+現時点で成功しているのは、CNN部をMobileNetのフィルタ削減版に置き換えたモデル。  
+[デモ動画を含めたプレゼンテーション資料](https://nknytk.github.io/presentations/20180524_GPUDL/slide.html)
+
+* 顔の検出
+   - Raspberry Pi 3 Model B + USB Webカメラ の環境で、6.5FPSで顔の検出を行える。詳しくは[こちら](object_detection/face_detection.md)を参照。
+* 乗り物・動物・人間の3物体の検出
+   - Raspberry Pi 3 Model B + USB Webカメラ の環境で、4.4FPSで顔の検出を行える。
+
 
 ## License
 
